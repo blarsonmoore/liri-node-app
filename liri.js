@@ -7,8 +7,6 @@ var fs = require("fs-extra");
 
 var keys = require("./keys");
 
-var arg = process.argv;
-
 var spot = new Spotify(keys.spotify);
 var client = new twitter(keys.twitter);
 
@@ -17,7 +15,13 @@ var paramsTwitter = {
   count: 20
 };
 
-var songName = process.argv[4];
+// var songName = process.argv[3];
+
+var songName = process.argv.slice(2);
+songName.sort((a, b) => a > b);
+for (value of songName) {
+  console.log(value);
+}
 
 var command = process.argv[2];
 console.log(command);
@@ -40,6 +44,8 @@ switch (command) {
     break;
 }
 
+// Twitter Function
+
 function tweet() {
   client.get("statuses/user_timeline", paramsTwitter, function(
     err,
@@ -61,14 +67,18 @@ function tweet() {
   });
 }
 
+// Spotify Function
+
 function song() {
-  spot.search(
-    { type: "track", query: "'" + songName + "'", limit: 5 },
-    function(err, data) {
-      if (err) {
-        return console.log("Error occurred: " + err);
-      }
-      console.log(JSON.stringify(data.tracks.items[0].artists, null, 2));
+  spot.search({ type: "track", query: "'" + songName + "'" }, function(
+    err,
+    data
+  ) {
+    if (err) {
+      return console.log("Error occurred: " + err);
     }
-  );
+    console.log(songName);
+    // console.log(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(data.tracks.items[0].artists, null, 2));
+  });
 }
