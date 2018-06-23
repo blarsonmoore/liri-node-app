@@ -14,5 +14,6 @@ exports.spotify = {
   secret: process.env.SPOTIFY_SECRET
 };
 
-console.log(exports.twitter);
-console.log(exports.spotify);
+exports.omdb = {
+  
+}
