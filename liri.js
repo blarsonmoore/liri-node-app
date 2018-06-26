@@ -13,13 +13,14 @@ var client = new twitter(keys.twitter);
 
 //
 
-// var songName = process.argv.slice(2);
-// songName.sort((a, b) => a > b);
-// for (value of songName) {
+// var query = process.argv.slice(2);
+// query.sort((a, b) => a > b);
+// for (value of query) {
 //   console.log(value);
 // }
 
 var command = process.argv[2];
+var query = process.argv[3];
 console.log(command);
 
 switch (command) {
@@ -65,67 +66,37 @@ function tweet(params) {
 
 // Spotify Function
 
-// function song() {
-//   spot.search({ type: "track", query: "'" + songName + "'" }, function(
-//     err,
-//     data
-//   ) {
-//     if (err) {
-//       return console.log("Error occurred: " + err);
-//     }
-//     console.log(songName);
-//     // console.log(JSON.stringify(data, null, 2));
-//     console.log(JSON.stringify(data.tracks.items[0].artists, null, 2));
-//   });
-// }
-
-function song(songName) {
-  var songName = process.argv[3];
-  if (!songName) {
-    songName = "The Sign";
+function song(query) {
+  var query = process.argv[3];
+  if (!query) {
+    query = "the sign ace of base";
   }
-  params = songName;
+  params = query;
   spot.search({ type: "track", query: params }, function(err, data) {
-    if (!err) {
-      var songInfo = data.tracks.items;
-      for (var i = 0; i < 5; i++) {
-        if (songInfo[i] != undefined) {
-          var spotifyResults =
-            "Artist: " +
-            songInfo[i].artists[0].name +
-            "\r\n" +
-            "Song: " +
-            songInfo[i].name +
-            "\r\n" +
-            "Album the song is from: " +
-            songInfo[i].album.name +
-            "\r\n" +
-            "Preview Url: " +
-            songInfo[i].preview_url +
-            "\r\n" +
-            "------------------------------ " +
-            i +
-            " ------------------------------" +
-            "\r\n";
-          console.log(spotifyResults);
-        }
-      }
-    } else {
+    if (err) {
       console.log("Error :" + err);
       return;
+    }
+
+    for (var i = 0; i < 1; i++) {
+      var songInfo = data.tracks.items;
+      if (songInfo[i] != undefined) {
+        console.log("Artist: " + songInfo[i].artists[0].name);
+        console.log("Song: " + songInfo[i].name);
+        console.log("Album the song is from: " + songInfo[i].album.name);
+        console.log("Preview Url: " + songInfo[i].preview_url);
+      }
     }
   });
 }
 
-function movie(movieName) {
-  var movieName = process.argv[3];
-  if (!movieName) {
-    movieName = "Mr. Nobody";
+function movie(query) {
+  var query = process.argv[3];
+  if (!query) {
+    query = "Mr. Nobody";
   }
   request(
-    "https://www.omdbapi.com/?t=" +
-      movieName +
-      "&y=&plot=short&apikey=a59e0e91",
+    "https://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=a59e0e91",
     function(err, data, body) {
       if (err) {
         return console.log("Error" + err);
@@ -142,4 +113,29 @@ function movie(movieName) {
       console.log("Actors: " + JSON.parse(body).Actors);
     }
   );
+}
+
+function says() {
+  fs.readFile("random.txt", "utf-8", function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    } else if (data.indexOf(",") !== -1) {
+      var dataArr = data.split(",");
+      command = dataArr[0];
+      query = dataArr[1];
+    } else {
+      command = data;
+    }
+
+    if (command === "my-tweets") {
+      tweet();
+    } else if (command === "spotify-this-song") {
+      song();
+    } else if (command === "movie-this") {
+      movie();
+    } else {
+      console.log("Invalid Command. Please try again.");
+    }
+  });
 }
