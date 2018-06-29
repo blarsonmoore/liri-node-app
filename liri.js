@@ -14,8 +14,9 @@ var client = new twitter(keys.twitter);
 var command = process.argv[2];
 var query = process.argv.slice(3).join(" ");
 
-console.log("=====================");
 console.log("See attached ReadMe File for instructions.");
+console.log("=====================");
+console.log("");
 
 switch (command) {
   case "my-tweets":
@@ -44,15 +45,15 @@ function tweet(params) {
   };
   client.get("statuses/user_timeline", params, function(err, tweets, response) {
     if (err) {
-      return console.log("Error: " + err);
+      console.log(err);
+      return;
     } else {
-      console.log("My Recent Tweets");
-      console.log("");
+      console.log("My Most Recent Tweets");
+      console.log("======================");
 
       for (var i = 0; i < tweets.length; i++) {
-        console.log("( #" + (i + 1) + " )  " + tweets[i].text);
+        console.log("Tweet: " + tweets[i].text);
         console.log("Created:  " + tweets[i].created_at);
-        console.log("");
       }
     }
   });
@@ -67,7 +68,7 @@ function song(query) {
   params = query;
   spot.search({ type: "track", query: params }, function(err, data) {
     if (err) {
-      console.log("Error :" + err);
+      console.log(err);
       return;
     }
 
@@ -93,7 +94,7 @@ function movie(query) {
     "https://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=a59e0e91",
     function(err, data, body) {
       if (err) {
-        console.log("Error" + err);
+        console.log(err);
         return;
       }
       console.log("Movie Title: " + JSON.parse(body).Title);
