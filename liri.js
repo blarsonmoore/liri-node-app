@@ -11,17 +11,11 @@ var keys = require("./keys");
 var spot = new Spotify(keys.spotify);
 var client = new twitter(keys.twitter);
 
-//
-
-// var query = process.argv.slice(2);
-// query.sort((a, b) => a > b);
-// for (value of query) {
-//   console.log(value);
-// }
-
 var command = process.argv[2];
-var query = process.argv[3];
-console.log(command);
+var query = process.argv.slice(3).join(" ");
+
+console.log("=====================");
+console.log("See attached ReadMe File for instructions.");
 
 switch (command) {
   case "my-tweets":
@@ -67,7 +61,6 @@ function tweet(params) {
 // Spotify Function
 
 function song(query) {
-  var query = process.argv[3];
   if (!query) {
     query = "the sign ace of base";
   }
@@ -90,8 +83,9 @@ function song(query) {
   });
 }
 
+// OMDB Function
+
 function movie(query) {
-  var query = process.argv[3];
   if (!query) {
     query = "Mr. Nobody";
   }
@@ -99,7 +93,8 @@ function movie(query) {
     "https://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=a59e0e91",
     function(err, data, body) {
       if (err) {
-        return console.log("Error" + err);
+        console.log("Error" + err);
+        return;
       }
       console.log("Movie Title: " + JSON.parse(body).Title);
       console.log("Year: " + JSON.parse(body).Year);
@@ -115,6 +110,8 @@ function movie(query) {
   );
 }
 
+// Do what is says function
+
 function says() {
   fs.readFile("random.txt", "utf-8", function(err, data) {
     if (err) {
@@ -124,18 +121,18 @@ function says() {
       var dataArr = data.split(",");
       command = dataArr[0];
       query = dataArr[1];
+      console.log(data);
     } else {
       command = data;
     }
-
     if (command === "my-tweets") {
       tweet();
     } else if (command === "spotify-this-song") {
-      song();
+      song(query);
     } else if (command === "movie-this") {
-      movie();
+      movie(query);
     } else {
-      console.log("Invalid Command. Please try again.");
+      console.log("Command not working as designed. Please try again.");
     }
   });
 }
